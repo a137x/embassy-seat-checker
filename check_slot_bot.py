@@ -141,17 +141,23 @@ def check_slot(context: CallbackContext):
                         response = req.get('https://pieraksts.mfa.gov.lv/ru/calendar/available-month-dates?year=2022&month=4')      
                         message = response.json()
                         logger.info(f'message: {message}')
-                                        
-                if message != bad_message:
-                    # informing users of the bot
-                    for user_id in connected_users:
-                        bot.sendMessage(chat_id=user_id, text=f'Looks like need to check {url}, There is a slot on: {message}!')
+
+                        if message != bad_message:
+                            # informing users of the bot
+                            for user_id in connected_users:
+                                bot.sendMessage(chat_id=user_id, text=f'Looks like need to check {url}, There is a slot on: {message}!')
+             
+                else:                 
+                    if message != bad_message:
+                        # informing users of the bot
+                        for user_id in connected_users:
+                            bot.sendMessage(chat_id=user_id, text=f'Looks like need to check {url}, There is a slot on: {message}!')
                         
                 # updating slot
                 slot_status = {'timestamp': arrow.utcnow(), 'status': message}
 
         except Exception as e:
-            bot.sendMessage(chat_id=308421872, text=f'Somethng went wrong: {e}')
+            bot.sendMessage(chat_id=ADMIN_ID, text=f'Somethng went wrong: {e}')
             logger.error(f'Exception!: {e}')
         
         logger.info('waiting 50 sec and do stuff again.')
