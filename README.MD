@@ -7,6 +7,7 @@ A fan project that helped friends to get a seats for interview in Latvian embass
 Telegram bot that notifies if there is any available slot.
 
 ## Requirements
+- Python 3.6+
 - Telegram bot created via https://t.me/BotFather
 - chrome-browser driver installed in your host
 - patience

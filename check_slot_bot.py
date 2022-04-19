@@ -135,27 +135,16 @@ def check_slot(context: CallbackContext):
                         next_step_button = driver.find_element(By.CSS_SELECTOR, '.btn-next-step')
                         logger.info(f'clicked "{next_step_button.text}"')
                         next_step_button.click()
-                        time.sleep(2)
 
-                        req = request(driver)
-                        response = req.get('https://pieraksts.mfa.gov.lv/ru/calendar/available-month-dates?year=2022&month=4')      
-                        message = response.json()
-                        logger.info(f'message: {message}')
+                else:          
+                    # updating slot
+                    slot_status = {'timestamp': arrow.utcnow(), 'status': message}
 
-                        if message != bad_message:
-                            # informing users of the bot
-                            for user_id in connected_users:
-                                bot.sendMessage(chat_id=user_id, text=f'Looks like need to check {url}, There is a slot on: {message}!')
-             
-                else:                 
                     if message != bad_message:
                         # informing users of the bot
                         for user_id in connected_users:
                             bot.sendMessage(chat_id=user_id, text=f'Looks like need to check {url}, There is a slot on: {message}!')
                         
-                # updating slot
-                slot_status = {'timestamp': arrow.utcnow(), 'status': message}
-
         except Exception as e:
             bot.sendMessage(chat_id=ADMIN_ID, text=f'Somethng went wrong: {e}')
             logger.error(f'Exception!: {e}')
