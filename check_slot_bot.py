@@ -7,6 +7,7 @@ import time
 import requests
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 import arrow
 import undetected_chromedriver as uc
@@ -36,7 +37,7 @@ chromeOptions = Options()
 chromeOptions.add_argument("--headless")
 chromeOptions.add_argument("--no-default-browser-check")
 chromeOptions.add_argument("--no-first-run")
-driver = uc.Chrome(options=chromeOptions)
+driver = uc.Chrome(options=chromeOptions, use_subprocess=False)
 
 connected_users = dict()
 slot_status = {'timestamp': arrow.utcnow(), 'status': 'No data'}
@@ -93,7 +94,8 @@ def check_slot(context: CallbackContext):
         try:
             with driver:
                 req = request(driver)
-                response = req.get('https://pieraksts.mfa.gov.lv/ru/calendar/available-month-dates?year=2022&month=4')      
+                requested_month = datetime.now().month
+                response = req.get(f'https://pieraksts.mfa.gov.lv/ru/calendar/available-month-dates?year=2022&month={requested_month}')      
                 message = response.json()
                 logger.info(f'message: {message}')
 
@@ -110,27 +112,22 @@ def check_slot(context: CallbackContext):
                             'pyotr_kapitsa@someunexistingdomain.com' + Keys.TAB + 
                             '+7555888555' + Keys.TAB + Keys.TAB + Keys.ENTER)
                         logger.info(f'name, email and phone has been entered.')
-                        time.sleep(1)
                         
                         service_select = driver.find_element(By.CLASS_NAME, 'dropdown--wrapper')
                         service_select.click()
                         logger.info(f'clicked "{service_select.text}"')
-                        time.sleep(1)
                         
                         checkbox_repatr = driver.find_element(By.CSS_SELECTOR, 'div.js-checkbox:nth-child(3)')
                         checkbox_repatr.click()
                         logger.info('clicked "Подача документов на вид на жительство по репатриации"')
-                        time.sleep(1)
 
                         checkbox_confirmation = driver.find_element(By.CSS_SELECTOR, 'section.description:nth-child(4) > div:nth-child(2) > div:nth-child(7) > span:nth-child(2)')
                         checkbox_confirmation.click()
                         logger.info('agreed with terms of service.')
-                        time.sleep(1)
 
                         submit_button = driver.find_element(By.CSS_SELECTOR, 'section.description:nth-child(4) > div:nth-child(2) > div:nth-child(8) > button:nth-child(1)')
                         submit_button.click()
                         logger.info('submit button pressed.')
-                        time.sleep(1)
 
                         next_step_button = driver.find_element(By.CSS_SELECTOR, '.btn-next-step')
                         logger.info(f'clicked "{next_step_button.text}"')
@@ -149,8 +146,8 @@ def check_slot(context: CallbackContext):
             bot.sendMessage(chat_id=ADMIN_ID, text=f'Somethng went wrong: {e}')
             logger.error(f'Exception!: {e}')
         
-        logger.info('waiting 50 sec and do stuff again.')
-        time.sleep(50)
+        logger.info('waiting 60 sec and do stuff again.')
+        time.sleep(60)
 
 
 def main() -> None:
