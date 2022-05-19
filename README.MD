@@ -18,7 +18,7 @@ Telegram bot that notifies if there is any available slot.
 ## Installation and start
 - create and enter env: `python3 -m venv venv` `source ./venv/bin/activate`
 - install requirements: `pip install requirements.txt`
-- to start in background (disconnect from current ssh session): `bash /root/stpbot/start.sh & disown`
+- to start in background (disconnect from current ssh session): `bash start.sh & disown`
 - patience
 
 MIT License
